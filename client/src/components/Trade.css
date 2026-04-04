@@ -8,16 +8,26 @@
 }
 
 .body7 {
+    margin: 0;
+    padding: 0;
+    text-align: center;
+    min-height: 100vh;
+    background-image: url('./Images/background-2.png');
+    background-size: cover;
     display: flex;
+    flex-wrap: wrap; /* Allows stacking on mobile */
+    justify-content: center;
+    align-items: center;
+    gap: 30px;
+    padding: 40px 20px;
 }
 
 .body7 .selectCurrency,
 .body7 .enterDetails {
-    margin: auto;
-    margin-top: 5%;
-    height: 500px;
-    width: 40%;
-    overflow: hidden;
+    width: 450px;
+    max-width: 100%;
+    min-height: 500px;
+    padding-bottom: 20px;
     border-radius: 10px;
     box-shadow: 5px 20px 50px rgb(103, 101, 46);
     background-color: rgb(219, 217, 146, 0.8);

@@ -5,6 +5,9 @@
     min-height: 100vh;
     background-image: url('./Images/btc-4.png');
     background-size: cover;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .body5 p {
@@ -15,16 +18,14 @@
     position: absolute;
     top: 87%;
     left: 2%;
+    display: none; /* Hide the old "currently not available" paragraph permanently just in case */
 }
 
 .body5 .main {
-    position: absolute;
-    top: 22px;
-    left: 870px;
-    z-index: 1;
+    position: relative;
     width: 450px;
-    height: 600px;
-    overflow: hidden;
+    max-width: 90%;
+    padding: 20px 0 40px 0;
     border-radius: 10px;
     box-shadow: 5px 20px 50px rgb(103, 101, 46);
     background: rgb(219, 217, 146, 0.8);

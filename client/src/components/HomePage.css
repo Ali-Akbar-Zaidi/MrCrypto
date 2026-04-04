@@ -96,4 +96,37 @@
     display: flex;
     justify-content: center;
     background: linear-gradient(to bottom, #bdc482, #d1d087, #ffff96);
+    padding: 15px;
+}
+
+/* RESPONSIVE DESIGN */
+@media (max-width: 900px) {
+    .container2 {
+        grid-template-columns: 1fr;
+        grid-template-areas: 
+            "header" 
+            "main" 
+            "box1" 
+            "box2" 
+            "box3";
+        grid-template-rows: auto auto auto auto auto;
+    }
+    
+    .menuItems2 {
+        flex-wrap: wrap;
+        gap: 15px;
+        justify-content: center;
+    }
+
+    .box1, .box2, .box3 {
+        flex-direction: column;
+        text-align: center;
+        padding: 20px;
+    }
+
+    .box1 img, .box2 img, .box3 img {
+        margin: 20px auto;
+        max-width: 80%;
+        height: auto;
+    }
 }

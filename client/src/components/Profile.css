@@ -9,30 +9,32 @@
 
 .body6 .container {
     display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 30px;
+    padding: 40px 20px;
+    max-width: 1200px;
+    margin: 0 auto;
 }
 
 .body6 .credentials {
-    width: 30%;
+    width: 350px;
+    max-width: 100%;
+    flex-grow: 1;
 }
 
 .body6 .otherDetails {
-    width: 60%;
+    width: 600px;
+    max-width: 100%;
+    flex-grow: 2;
 }
 
 .body6 .credentials,
 .body6 .otherDetails {
-    margin: auto;
-    margin-top: 5%;
-    height: 500px;
-    overflow: hidden;
     border-radius: 10px;
     box-shadow: 5px 20px 50px rgb(103, 101, 46);
-    background-color: rgb(219, 217, 146, 0.8);
-}
-
-.body6 .credentials {
-    margin-top: 1.5%;
-    height: 600px;
+    background-color: rgb(219, 217, 146, 0.9);
+    padding-bottom: 30px;
 }
 
 .body6 .credentials button:hover {
@@ -118,4 +120,110 @@
 .body6 .assetsP {
     margin-top: 40px;
     font-size: 23px;
+}
+
+/* --- STATS DASHBOARD STYLES --- */
+.body6 .statsSection {
+    display: flex;
+    justify-content: space-between;
+    padding: 0 40px;
+    margin-top: 20px;
+}
+
+.portfolioTotal {
+    width: 35%;
+    text-align: left;
+    color: rgb(47, 47, 21);
+}
+
+.portfolioTotal p {
+    justify-content: left;
+    margin-bottom: 5px;
+}
+
+.portfolioTotal h2 {
+    font-size: 2.2em;
+    margin: 0 0 20px 0;
+}
+
+.allocationBar {
+    width: 100%;
+    height: 30px;
+    background: #e0dede;
+    border-radius: 15px;
+    display: flex;
+    overflow: hidden;
+    margin-top: 10px;
+}
+
+.ethBar {
+    background: #627eea; /* Ethereum Brand Color */
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 0.8em;
+    font-weight: bold;
+    transition: width 0.5s ease-in-out;
+}
+
+.btcBar {
+    background: #f7931a; /* Bitcoin Brand Color */
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 0.8em;
+    font-weight: bold;
+    transition: width 0.5s ease-in-out;
+}
+
+.tradeHistory {
+    width: 60%;
+    background: rgba(255, 255, 255, 0.4);
+    border-radius: 10px;
+    padding: 15px;
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+.historyTitle {
+    justify-content: left;
+    margin-bottom: 10px;
+}
+
+.historyTable {
+    width: 100%;
+    border-collapse: collapse;
+    color: rgb(47, 47, 21);
+    text-align: left;
+}
+
+.historyTable th, .historyTable td {
+    padding: 8px;
+    border-bottom: 1px solid rgba(47, 47, 21, 0.2);
+}
+
+.historyTable th {
+    font-weight: bold;
+    font-style: italic;
+}
+
+.ethText {
+    color: #4a5c9a;
+    font-weight: bold;
+}
+
+.btcText {
+    color: #b56c12;
+    font-weight: bold;
+}
+
+.noTrades {
+    font-size: 0.9em;
+    font-style: italic;
+    justify-content: center;
+    margin-top: 30px;
 }

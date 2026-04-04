@@ -85,7 +85,7 @@ function Home() {
                 </div>
             </section>
             <footer className="footer2">
-                <p>Mr.Crypto Prediction App &copy; 2024, All Rights Reserved.</p>
+                <p>Mr.Crypto Prediction App &copy; 2026, All Rights Reserved.</p>
             </footer>
         </div>
     );

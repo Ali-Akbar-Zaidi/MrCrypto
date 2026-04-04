@@ -5,28 +5,20 @@
     min-height: 100vh;
     background-image: url('./Images/background.png');
     background-size: cover;
+    display: flex; /* Added for centering */
+    justify-content: center; /* Added for centering */
+    align-items: center; /* Added for centering */
 }
 
-/* .body1 .header1 {
-    position: absolute;
-    top: 10px;
-    left: 365px;
-    z-index: 1;
-    font-size: 40px;
-    font-weight: bold;
-    color: rgb(219, 217, 146);
-} */
-
 .body1 .main1 {
-    position: absolute;
-    top: 70px;
-    left: 800px;
-    z-index: 1;
+    position: relative; /* Changed from absolute */
+    /* top/left removed */
     width: 350px;
     height: 500px;
     overflow: hidden;
     border-radius: 10px;
     box-shadow: 5px 20px 50px rgb(103, 101, 46);
+    background-color: rgba(255, 255, 255, 0.1); /* Provide some contrast if image fails */
 }
 
 .body1 #check1 {
