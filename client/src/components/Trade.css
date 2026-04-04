@@ -1,0 +1,103 @@
+.body7 {
+    margin: 0;
+    padding: 0;
+    text-align: center;
+    min-height: 100vh;
+    background-image: url('./Images/background-2.png');
+    background-size: cover;
+}
+
+.body7 {
+    display: flex;
+}
+
+.body7 .selectCurrency,
+.body7 .enterDetails {
+    margin: auto;
+    margin-top: 5%;
+    height: 500px;
+    width: 40%;
+    overflow: hidden;
+    border-radius: 10px;
+    box-shadow: 5px 20px 50px rgb(103, 101, 46);
+    background-color: rgb(219, 217, 146, 0.8);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.body7 .header1, .body7 .header2 {
+    color: rgb(47, 47, 21);
+    font-size: 2.1em;
+    justify-content: center;
+    display: flex;
+    margin: 60px;
+    font-weight: bold;
+}
+
+.body7 .header2 {
+    margin: 30px;
+}
+
+.body7 .crLabel,
+.body7 .total {
+    color: rgb(47, 47, 21);
+    font-size: 1.5em;
+    justify-content: center;
+    display: flex;
+    margin: 60px;
+    font-weight: bold;
+}
+
+.body7 .crLabel {
+    font-size: 1.5em;
+    margin: auto;
+}
+
+.body7 select,
+.body7 .form1 input,
+.body7 .form2 input {
+    width: 60%;
+    height: 20px;
+    background: #e0dede;
+    justify-content: center;
+    display: flex;
+    padding: 10px;
+    border: none;
+    outline: none;
+    border-radius: 5px;
+    font-size: 15px;
+    text-align: center;
+}
+
+.body7 .form1 input, .body7 select {
+    margin: 20px auto;
+}
+
+.body7 .form2 input {
+    margin: 0px auto;
+}
+
+.body7 select {
+    height: 100%;
+}
+
+.body7 button {
+    width: 50%;
+    height: 40px;
+    margin: 10px auto;
+    justify-content: center;
+    display: block;
+    color: #e0dede;
+    background-color: rgb(47, 47, 21);
+    font-size: 1em;
+    font-weight: bold;
+    margin-top: 35px;
+    outline: none;
+    border: none;
+    border-radius: 5px;
+}
+
+.body7 button:hover {
+    background: rgb(104, 103, 63);
+}

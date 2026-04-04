@@ -1,0 +1,87 @@
+.body5 {
+    margin: 0;
+    padding: 0;
+    text-align: center;
+    min-height: 100vh;
+    background-image: url('./Images/btc-4.png');
+    background-size: cover;
+}
+
+.body5 p {
+    font-size: 31.5px;
+    font-style: italic;
+    font-weight: bold;
+    color: white;
+    position: absolute;
+    top: 87%;
+    left: 2%;
+}
+
+.body5 .main {
+    position: absolute;
+    top: 22px;
+    left: 870px;
+    z-index: 1;
+    width: 450px;
+    height: 600px;
+    overflow: hidden;
+    border-radius: 10px;
+    box-shadow: 5px 20px 50px rgb(103, 101, 46);
+    background: rgb(219, 217, 146, 0.8);
+}
+
+.body5 .heading {
+    color: rgb(47, 47, 21);
+    font-size: 2em;
+    justify-content: center;
+    display: flex;
+    margin: 60px;
+    font-weight: bold;
+}
+
+.body5 .date {
+    width: 60%;
+    height: 20px;
+    background: #e0dede;
+    justify-content: center;
+    display: flex;
+    margin: 20px auto;
+    padding: 10px;
+    border: none;
+    outline: none;
+    border-radius: 5px;
+    font-size: 20px;
+}
+
+.body5 button {
+    width: 60%;
+    height: 40px;
+    margin: 10px auto;
+    justify-content: center;
+    display: block;
+    color: rgb(249, 247, 192);
+    background: rgb(62, 60, 25);
+    font-size: 1em;
+    font-weight: bold;
+    margin-top: 20px;
+    outline: none;
+    border: none;
+    border-radius: 5px;
+}
+
+.body5 button:hover {
+    background: rgb(125, 124, 76);
+}
+
+.body5 .predictionDetails {
+    padding: 0;
+    margin-top: 50px;
+    display: flexbox;
+}
+
+.body5 .pdLabel {
+    margin-top: 30px;
+    font-size: 20px;
+    font-weight: bold;
+    color: rgb(47, 47, 21);
+}

@@ -1,0 +1,99 @@
+.body2 * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+.container2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr;
+    grid-template-areas: "header main main main main main"
+        "box1 box1 box1 box1 box1 box1"
+        "box2 box2 box2 box2 box2 box2"
+        "box3 box3 box3 box3 box3 box3";
+    grid-template-rows: 0.4fr 1.2fr 1.2fr 1.2fr;
+    grid-gap: 0.1rem;
+}
+
+.header2 {
+    grid-area: header;
+}
+
+.header2 img {
+    height: 100%;
+    width: 100%;
+}
+
+.main2 {
+    color: rgb(47, 47, 21);
+    grid-area: main;
+    background: linear-gradient(to bottom, #bdc482, #d1d087, #ffff96);
+}
+
+.main2 header {
+    text-align: center;
+    font-size: 40px;
+    font-style: italic;
+    margin-top: 20px;
+    margin-left: 20px;
+}
+
+.menuItems2 {
+    width: 100%;
+    display: flex;
+    margin-top: 20px;
+}
+
+.main2 a {
+    grid-area: menu;
+    font-size: 25px;
+    margin: auto;
+    color: rgb(47, 47, 21);
+}
+
+.box1,
+.box2,
+.box3 {
+    font-size: 21px;
+    display: flex;
+    color: rgb(47, 47, 21);
+}
+
+.box1 {
+    grid-area: box1;
+}
+
+.box2 {
+    grid-area: box2;
+}
+
+.box3 {
+    grid-area: box3;
+}
+
+.box1 img,
+.box2 img,
+.box3 img {
+    height: 250px;
+    width: auto;
+}
+
+.box1 p,
+.box2 p,
+.box3 p {
+    margin: auto;
+    margin-left: 10px;
+    margin-right: 10px;
+}
+
+.span {
+    font-size: 25px;
+    font-weight: bold;
+}
+
+.footer2 {
+    grid-area: footer;
+    display: flex;
+    justify-content: center;
+    background: linear-gradient(to bottom, #bdc482, #d1d087, #ffff96);
+}
