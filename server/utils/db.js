@@ -1,13 +1,10 @@
 const mongoose = require("mongoose");
-
-const URI = "mongodb+srv://l215845:123456!@cluster0.yipwsci.mongodb.net/mrCrypto?retryWrites=true&w=majority&appName=Cluster0";
-
 const connectDB = async () => {
     try {
-        await mongoose.connect(URI);
+        await mongoose.connect(process.env.MongoDb_URI);
         console.log("Database connected successfully!");
     } catch (error) {
-        console.error("Failed to connect to database.");
+        console.error("Failed to connect to database.", error);
         process.exit(0);
     }
 }

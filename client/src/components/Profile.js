@@ -1,27 +1,68 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAuth } from '../store/auth';
 import './Profile.css';
 
 function Profile() {
-    const { updateProfile } = useAuth();
+    const { updateProfile, getProfile, getCryptoPrices } = useAuth();
 
     const [profile, setProfile] = useState({
-        userId: localStorage.getItem("userId") || "",
-        username: localStorage.getItem("user") || "",
-        email: localStorage.getItem("email") || "",
-        password: localStorage.getItem("password") || "",
+        username: "",
+        email: "",
+        password: "",
     });
 
     const [message, setMessage] = useState({ text: "", type: "" });
+    const [loading, setLoading] = useState(false);
+    const [prices, setPrices] = useState({ BTC: 0, ETH: 0 });
+    const [holdings, setHoldings] = useState({ btc: 0, eth: 0 });
+    const [tradeHistory, setTradeHistory] = useState([]);
+    const [profileLoading, setProfileLoading] = useState(true);
+
+    // Fetch all data from MongoDB on mount
+    useEffect(() => {
+        const fetchData = async () => {
+            setProfileLoading(true);
+
+            // Fetch profile from MongoDB via server
+            const profileRes = await getProfile();
+            if (profileRes.success) {
+                setProfile({
+                    username: profileRes.data.username,
+                    email: profileRes.data.email,
+                    password: "",
+                });
+                setHoldings({
+                    btc: profileRes.data.btc || 0,
+                    eth: profileRes.data.eth || 0,
+                });
+                setTradeHistory(profileRes.data.tradeHistory || []);
+            }
+
+            // Fetch live crypto prices from CoinGecko via server
+            const priceRes = await getCryptoPrices();
+            if (priceRes.success) {
+                setPrices({
+                    BTC: priceRes.data.BTC?.current_price || 0,
+                    ETH: priceRes.data.ETH?.current_price || 0,
+                });
+            }
+
+            setProfileLoading(false);
+        };
+
+        fetchData();
+    }, [getProfile, getCryptoPrices]);
 
     const setProfileData = (e) => {
         setProfile({ ...profile, [e.target.name]: e.target.value });
         setMessage({ text: "", type: "" });
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        const result = updateProfile(profile);
+        setLoading(true);
+        const result = await updateProfile(profile);
+        setLoading(false);
         if (result.success) {
             setMessage({ text: "Profile updated successfully!", type: "success" });
         } else {
@@ -29,23 +70,25 @@ function Profile() {
         }
     };
 
-    const BTC_PRICE = 61731.50;
-    const ETH_PRICE = 2905.31;
-
-    const btcQty = parseFloat(localStorage.getItem('btc') || "0");
-    const ethQty = parseFloat(localStorage.getItem('eth') || "0");
-    
-    // Stats Calculations
-    const btcWorth = btcQty * BTC_PRICE;
-    const ethWorth = ethQty * ETH_PRICE;
+    // Stats Calculations using live prices from server
+    const btcWorth = holdings.btc * prices.BTC;
+    const ethWorth = holdings.eth * prices.ETH;
     const totalWorth = btcWorth + ethWorth;
-    
+
     const ethPercent = totalWorth > 0 ? Math.round((ethWorth / totalWorth) * 100) : 0;
     const btcPercent = totalWorth > 0 ? Math.round((btcWorth / totalWorth) * 100) : 0;
 
-    const userId = localStorage.getItem('userId');
-    const historyStr = localStorage.getItem(`tradeHistory_${userId}`);
-    const tradeHistory = historyStr ? JSON.parse(historyStr) : [];
+    if (profileLoading) {
+        return (
+            <div className='body6'>
+                <section className="container">
+                    <p style={{ color: '#fff', textAlign: 'center', padding: '50px', fontSize: '1.2em' }}>
+                        Loading profile from database...
+                    </p>
+                </section>
+            </div>
+        );
+    }
 
     return (
         <div className='body6'>
@@ -76,15 +119,14 @@ function Profile() {
                             required
                         />
 
-                        <label htmlFor="password" className="crLabel">Password</label>
+                        <label htmlFor="password" className="crLabel">New Password</label>
                         <input
                             id="password"
                             type="password"
                             name="password"
-                            placeholder="Password"
+                            placeholder="Leave blank to keep current"
                             value={profile.password}
                             onChange={setProfileData}
-                            required
                         />
 
                         {message.text && (
@@ -93,7 +135,9 @@ function Profile() {
                             </p>
                         )}
 
-                        <button type="submit">Update</button>
+                        <button type="submit" disabled={loading}>
+                            {loading ? 'Updating...' : 'Update'}
+                        </button>
                     </form>
                     <br /><br />
                     <p>(Note: The details will be updated once you click the Update button.)</p>
@@ -104,13 +148,15 @@ function Profile() {
                     <section className='assetsSection'>
                         <div className='ethSection'>
                             <label className='assetsLabel'>ETH</label>
-                            <p className='assetsP'>Quantity: {ethQty.toFixed(4)}</p>
-                            <p className='assetsP'>Worth: $ {(ethQty * ETH_PRICE).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
+                            <p className='assetsP'>Quantity: {holdings.eth.toFixed(4)}</p>
+                            <p className='assetsP'>Worth: $ {ethWorth.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
+                            <p className='assetsP' style={{ fontSize: '0.8em', opacity: 0.7 }}>Price: ${prices.ETH.toLocaleString()}</p>
                         </div>
                         <div className='btcSection'>
                             <label className='assetsLabel'>BTC</label>
-                            <p className='assetsP'>Quantity: {btcQty.toFixed(4)}</p>
-                            <p className='assetsP'>Worth: $ {(btcQty * BTC_PRICE).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
+                            <p className='assetsP'>Quantity: {holdings.btc.toFixed(4)}</p>
+                            <p className='assetsP'>Worth: $ {btcWorth.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
+                            <p className='assetsP' style={{ fontSize: '0.8em', opacity: 0.7 }}>Price: ${prices.BTC.toLocaleString()}</p>
                         </div>
                     </section>
 
@@ -147,8 +193,8 @@ function Profile() {
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        {tradeHistory.slice(-5).reverse().map(trade => (
-                                            <tr key={trade.id}>
+                                        {tradeHistory.slice(-5).reverse().map((trade, idx) => (
+                                            <tr key={trade._id || idx}>
                                                 <td>{new Date(trade.date).toLocaleDateString()}</td>
                                                 <td className={trade.currency === 'ETH' ? 'ethText' : 'btcText'}>{trade.currency}</td>
                                                 <td>{trade.quantity}</td>

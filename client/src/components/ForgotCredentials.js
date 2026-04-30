@@ -8,8 +8,9 @@ function ForgotCredentials() {
     const navigate = useNavigate();
 
     const [credentials, setCredentials] = useState({ username: "", email: "" });
-    const [result, setResult] = useState(null); // { password } or null
+    const [result, setResult] = useState(null);
     const [error, setError] = useState("");
+    const [loading, setLoading] = useState(false);
 
     const handleChange = (e) => {
         setCredentials({ ...credentials, [e.target.name]: e.target.value });
@@ -17,11 +18,13 @@ function ForgotCredentials() {
         setResult(null);
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        const res = getPasswordByCredentials(credentials);
+        setLoading(true);
+        const res = await getPasswordByCredentials(credentials);
+        setLoading(false);
         if (res.success) {
-            setResult(res.password);
+            setResult(res);
         } else {
             setError(res.message);
         }
@@ -48,15 +51,22 @@ function ForgotCredentials() {
                         onChange={handleChange}
                         required
                     />
-                    <button type="submit">Find My Password</button>
+                    <button type="submit" disabled={loading}>
+                        {loading ? 'Searching...' : 'Find My Password'}
+                    </button>
                 </form>
 
                 {error && <p className="errorMsg" style={{ color: "#e74c3c", marginTop: "10px" }}>{error}</p>}
 
                 {result && (
                     <div className="recoveredPassword">
-                        <p>Your password is:</p>
-                        <strong>{result}</strong>
+                        <p>{result.message}</p>
+                        {result.password && (
+                            <>
+                                <p>Your password is:</p>
+                                <strong>{result.password}</strong>
+                            </>
+                        )}
                         <br /><br />
                         <button onClick={() => navigate("/login")}>Go to Login</button>
                     </div>

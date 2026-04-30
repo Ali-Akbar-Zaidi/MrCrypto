@@ -10,15 +10,18 @@ function LoginPage() {
     // ── Login state ───────────────────────────────────────────────────────────
     const [loginData, setLoginData] = useState({ username: "", password: "" });
     const [loginError, setLoginError] = useState("");
+    const [loginLoading, setLoginLoading] = useState(false);
 
     const handleLoginChange = (e) => {
         setLoginData({ ...loginData, [e.target.name]: e.target.value });
         setLoginError("");
     };
 
-    const handleLoginSubmit = (e) => {
+    const handleLoginSubmit = async (e) => {
         e.preventDefault();
-        const result = login(loginData);
+        setLoginLoading(true);
+        const result = await login(loginData);
+        setLoginLoading(false);
         if (result.success) {
             alert("Login Successful!");
             navigate("/");
@@ -31,13 +34,14 @@ function LoginPage() {
     const [signUpData, setSignUpData] = useState({ username: "", email: "", password: "" });
     const [confirmPassword, setConfirmPassword] = useState("");
     const [signUpError, setSignUpError] = useState("");
+    const [signUpLoading, setSignUpLoading] = useState(false);
 
     const handleSignUpChange = (e) => {
         setSignUpData({ ...signUpData, [e.target.name]: e.target.value });
         setSignUpError("");
     };
 
-    const handleSignUpSubmit = (e) => {
+    const handleSignUpSubmit = async (e) => {
         e.preventDefault();
         if (signUpData.password !== confirmPassword) {
             setSignUpError("Passwords do not match!");
@@ -47,7 +51,9 @@ function LoginPage() {
             setSignUpError("Password must be at least 6 characters.");
             return;
         }
-        const result = signUp(signUpData);
+        setSignUpLoading(true);
+        const result = await signUp(signUpData);
+        setSignUpLoading(false);
         if (result.success) {
             alert("Sign Up Successful! Now login with your new account.");
             navigate("/login");
@@ -84,7 +90,9 @@ function LoginPage() {
                             required
                         />
                         {loginError && <p className="errorMsg">{loginError}</p>}
-                        <button className='button1' type="submit">Login</button>
+                        <button className='button1' type="submit" disabled={loginLoading}>
+                            {loginLoading ? 'Logging in...' : 'Login'}
+                        </button>
                     </form>
                     <button
                         className='button1 forgotBtn'
@@ -136,7 +144,9 @@ function LoginPage() {
                             required
                         />
                         {signUpError && <p className="errorMsg">{signUpError}</p>}
-                        <button className='button1' type="submit">Sign Up</button>
+                        <button className='button1' type="submit" disabled={signUpLoading}>
+                            {signUpLoading ? 'Signing Up...' : 'Sign Up'}
+                        </button>
                     </form>
                 </div>
             </div>

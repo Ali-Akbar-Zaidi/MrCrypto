@@ -111,3 +111,42 @@
 .body7 button:hover {
     background: rgb(104, 103, 63);
 }
+
+/* ── Card validation feedback styles ────────────────────────────── */
+.body7 .inputError {
+    border: 2px solid #e74c3c !important;
+    background: #fff0f0 !important;
+}
+
+.body7 .inputValid {
+    border: 2px solid #27ae60 !important;
+    background: #f0fff4 !important;
+}
+
+.body7 .fieldError {
+    color: #e74c3c;
+    font-size: 0.78em;
+    margin: 4px auto 0;
+    padding: 0;
+    width: 60%;
+    text-align: center;
+    font-weight: 600;
+}
+
+.body7 .cardTypeBadge {
+    display: inline-block;
+    background: rgb(47, 47, 21);
+    color: #e0dede;
+    font-size: 0.55em;
+    padding: 2px 8px;
+    border-radius: 4px;
+    margin-left: 8px;
+    vertical-align: middle;
+    letter-spacing: 0.5px;
+    font-weight: 700;
+}
+
+.body7 button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}

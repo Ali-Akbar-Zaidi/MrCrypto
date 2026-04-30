@@ -1,58 +1,41 @@
 import React, { useState } from 'react';
+import { useAuth } from '../store/auth';
 import './PredictETH.css';
 
 function PredictETH() {
+    const { predictPrice } = useAuth();
     const [date, setDate] = useState('');
     const [prediction, setPrediction] = useState(null);
+    const [basePrice, setBasePrice] = useState(null);
     const [loading, setLoading] = useState(false);
+    const [error, setError] = useState('');
 
     const handleDateChange = (event) => {
         setDate(event.target.value);
         setPrediction(null);
+        setBasePrice(null);
+        setError('');
     };
 
-    // Simple pseudo-random hash generator based on the date string
-    const generateHash = (str) => {
-        let hash = 0;
-        for (let i = 0; i < str.length; i++) {
-            const char = str.charCodeAt(i);
-            hash = (hash << 5) - hash + char;
-            hash &= hash; // Convert to 32bit integer
-        }
-        return Math.abs(hash);
-    };
-
-    const handleSubmit = (event) => {
+    const handleSubmit = async (event) => {
         event.preventDefault();
         
         if (!date) return;
         
         setLoading(true);
         setPrediction(null);
+        setError('');
 
-        // Simulate network/processing delay for realism
-        setTimeout(() => {
-            // Using a base price for ETH to generate realistic fluctuations
-            const basePrice = 2905.31;
-            const hash = generateHash(date);
-            
-            // Map the hash to a predictable randomness factor between -0.15 and +0.35 (ETH volatility)
-            const factor = ((hash % 100) / 100) * 0.5 - 0.15; 
-            
-            const predictedCurrent = basePrice * (1 + factor);
-            const predictedHigh = predictedCurrent * (1 + ((hash % 50) / 1000) + 0.01);
-            const predictedLow = predictedCurrent * (1 - ((hash % 40) / 1000) - 0.01);
-            const predictedOpen = predictedCurrent * (1 + (((hash % 20) - 10) / 1000));
-            
-            setPrediction({
-                current: predictedCurrent.toFixed(2),
-                high: predictedHigh.toFixed(2),
-                low: predictedLow.toFixed(2),
-                open: predictedOpen.toFixed(2)
-            });
-            
-            setLoading(false);
-        }, 1200);
+        const result = await predictPrice({ coin: "ETH", date });
+
+        if (result.success) {
+            setPrediction(result.data.prediction);
+            setBasePrice(result.data.basePrice);
+        } else {
+            setError(result.message || "Failed to get prediction");
+        }
+
+        setLoading(false);
     };
 
     return (
@@ -60,6 +43,11 @@ function PredictETH() {
             <div className="main">
                 <form onSubmit={handleSubmit}>
                     <label className="heading" htmlFor="check" aria-hidden="true">Predict Ethereum Prices</label>
+                    {basePrice && (
+                        <p style={{ color: '#627eea', textAlign: 'center', fontSize: '0.9em', margin: '5px 0' }}>
+                            Current ETH Price: $ {Number(basePrice).toLocaleString()}
+                        </p>
+                    )}
                     <input
                         className="date"
                         type="date"
@@ -72,12 +60,16 @@ function PredictETH() {
                         {loading ? 'Predicting...' : 'Predict'}
                     </button>
                 </form>
+
+                {error && (
+                    <p style={{ color: '#e74c3c', textAlign: 'center', marginTop: '10px' }}>{error}</p>
+                )}
                 
                 <section className="predictionDetails">
-                    <div className="pdLabel">Open Price: {prediction ? `$ ${prediction.open}` : '-----'}</div>
-                    <div className="pdLabel">High Price: {prediction ? `$ ${prediction.high}` : '-----'}</div>
-                    <div className="pdLabel">Low Price:  {prediction ? `$ ${prediction.low}` : '-----'}</div>
-                    <div className="pdLabel currentPriceLabel">Current Price: {prediction ? `$ ${prediction.current}` : '-----'}</div>
+                    <div className="pdLabel">Open Price: {prediction ? `$ ${Number(prediction.open).toLocaleString()}` : '-----'}</div>
+                    <div className="pdLabel">High Price: {prediction ? `$ ${Number(prediction.high).toLocaleString()}` : '-----'}</div>
+                    <div className="pdLabel">Low Price:  {prediction ? `$ ${Number(prediction.low).toLocaleString()}` : '-----'}</div>
+                    <div className="pdLabel currentPriceLabel">Current Price: {prediction ? `$ ${Number(prediction.current).toLocaleString()}` : '-----'}</div>
                 </section>
             </div>
         </div>

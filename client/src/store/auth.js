@@ -1,108 +1,221 @@
 import React, { createContext, useContext, useState, useCallback } from "react";
 
+// Use the same port the server is running on — change here if your .env PORT changes
+const API_URL = "http://localhost:5001/api";
+
 const AuthContext = createContext();
 
 const AuthProvider = ({ children }) => {
+    // Only token and username are stored in localStorage (for session persistence across refresh)
     const [user, setUser] = useState(() => localStorage.getItem("user") || null);
     const [token, setToken] = useState(() => localStorage.getItem("token") || null);
 
-    // ── Helpers ──────────────────────────────────────────────────────────────
-    const getUsers = () => JSON.parse(localStorage.getItem("users") || "[]");
-    const saveUsers = (users) => localStorage.setItem("users", JSON.stringify(users));
+    // ── Helper: get auth headers ─────────────────────────────────────────────
+    const getHeaders = useCallback(() => ({
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+    }), []);
 
-    // ── Sign Up ───────────────────────────────────────────────────────────────
-    const signUp = useCallback(({ username, email, password }) => {
-        const users = getUsers();
-        const exists = users.find(
-            (u) => u.username === username || u.email === email
-        );
-        if (exists) return { success: false, message: "Username or Email already exists!" };
+    // ── Sign Up (saves user to MongoDB) ───────────────────────────────────────
+    const signUp = useCallback(async ({ username, email, password }) => {
+        try {
+            const res = await fetch(`${API_URL}/auth/signUp`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ username, email, password }),
+            });
+            const data = await res.json();
 
-        const newUser = {
-            userId: Date.now().toString(),
-            username,
-            email,
-            password,
-            btc: "0",
-            eth: "0",
-        };
-        saveUsers([...users, newUser]);
-        return { success: true };
+            if (!res.ok) {
+                const msg = data.errors
+                    ? data.errors.map((e) => e.message).join(", ")
+                    : data.message || "Sign up failed";
+                return { success: false, message: msg };
+            }
+
+            return { success: true };
+        } catch (error) {
+            console.error("signUp error:", error);
+            return { success: false, message: "Network error. Is the server running?" };
+        }
     }, []);
 
-    // ── Login ─────────────────────────────────────────────────────────────────
-    const login = useCallback(({ username, password }) => {
-        const users = getUsers();
-        const found = users.find(
-            (u) => u.username === username && u.password === password
-        );
-        if (!found) return { success: false, message: "Incorrect credentials!" };
+    // ── Login (authenticates against MongoDB) ─────────────────────────────────
+    const login = useCallback(async ({ username, password }) => {
+        try {
+            const res = await fetch(`${API_URL}/auth/login`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ username, password }),
+            });
+            const data = await res.json();
 
-        // Create a simple session token
-        const sessionToken = btoa(`${found.userId}:${Date.now()}`);
-        localStorage.setItem("token", sessionToken);
-        localStorage.setItem("userId", found.userId);
-        localStorage.setItem("user", found.username);
-        localStorage.setItem("email", found.email);
-        localStorage.setItem("password", found.password);
-        localStorage.setItem("btc", found.btc);
-        localStorage.setItem("eth", found.eth);
+            if (!res.ok) {
+                const msg = data.errors
+                    ? data.errors.map((e) => e.message).join(", ")
+                    : data.message || "Login failed";
+                return { success: false, message: msg };
+            }
 
-        setUser(found.username);
-        setToken(sessionToken);
-        return { success: true };
+            // Only store token and username in localStorage for session
+            localStorage.setItem("token", data.token);
+            localStorage.setItem("user", data.user);
+
+            setUser(data.user);
+            setToken(data.token);
+            return { success: true };
+        } catch (error) {
+            console.error("login error:", error);
+            return { success: false, message: "Network error. Is the server running?" };
+        }
     }, []);
 
     // ── Logout ────────────────────────────────────────────────────────────────
     const logout = useCallback(() => {
-        localStorage.clear();
+        localStorage.removeItem("token");
+        localStorage.removeItem("user");
         setUser(null);
         setToken(null);
     }, []);
 
-    // ── Update Profile ────────────────────────────────────────────────────────
-    const updateProfile = useCallback(({ userId, username, email, password }) => {
-        const users = getUsers();
-        const idx = users.findIndex((u) => u.userId === userId);
-        if (idx === -1) return { success: false, message: "User not found!" };
+    // ── Get Profile (all data from MongoDB) ──────────────────────────────────
+    const getProfile = useCallback(async () => {
+        try {
+            const res = await fetch(`${API_URL}/auth/profile`, {
+                method: "GET",
+                headers: getHeaders(),
+            });
+            const data = await res.json();
+            if (!res.ok) return { success: false, message: data.message };
 
-        // Check uniqueness (skip the current user)
-        const duplicate = users.find(
-            (u, i) => i !== idx && (u.username === username || u.email === email)
-        );
-        if (duplicate) return { success: false, message: "Username or Email already taken!" };
-
-        users[idx] = { ...users[idx], username, email, password };
-        saveUsers(users);
-
-        localStorage.setItem("user", username);
-        localStorage.setItem("email", email);
-        localStorage.setItem("password", password);
-        setUser(username);
-        return { success: true };
-    }, []);
-
-    // ── Update Crypto Holdings ────────────────────────────────────────────────
-    const updateHoldings = useCallback(({ btc, eth }) => {
-        const userId = localStorage.getItem("userId");
-        const users = getUsers();
-        const idx = users.findIndex((u) => u.userId === userId);
-        if (idx !== -1) {
-            users[idx] = { ...users[idx], btc, eth };
-            saveUsers(users);
+            return { success: true, data };
+        } catch (error) {
+            console.error("getProfile error:", error);
+            return { success: false, message: "Network error" };
         }
-        localStorage.setItem("btc", btc);
-        localStorage.setItem("eth", eth);
+    }, [getHeaders]);
+
+    // ── Update Profile (updates MongoDB) ──────────────────────────────────────
+    const updateProfile = useCallback(async ({ username, email, password }) => {
+        try {
+            const body = {};
+            if (username) body.username = username;
+            if (email) body.email = email;
+            if (password) body.password = password;
+
+            const res = await fetch(`${API_URL}/auth/updateProfile`, {
+                method: "PUT",
+                headers: getHeaders(),
+                body: JSON.stringify(body),
+            });
+            const data = await res.json();
+
+            if (!res.ok) {
+                const msg = data.errors
+                    ? data.errors.map((e) => e.message).join(", ")
+                    : data.message || "Update failed";
+                return { success: false, message: msg };
+            }
+
+            // Sync the display name in localStorage
+            if (data.username) {
+                localStorage.setItem("user", data.username);
+                setUser(data.username);
+            }
+
+            return { success: true };
+        } catch (error) {
+            console.error("updateProfile error:", error);
+            return { success: false, message: "Network error" };
+        }
+    }, [getHeaders]);
+
+    // ── Trade (persists to MongoDB) ──────────────────────────────────────────
+    const executeTrade = useCallback(async ({ currency, quantity, cardNumber, cvc, expiryDate }) => {
+        try {
+            const res = await fetch(`${API_URL}/auth/trade`, {
+                method: "PUT",
+                headers: getHeaders(),
+                body: JSON.stringify({
+                    currency,
+                    quantity: parseFloat(quantity),
+                    cardNumber,
+                    cvc,
+                    expiryDate,
+                }),
+            });
+            const data = await res.json();
+
+            if (!res.ok) {
+                const msg = data.errors
+                    ? data.errors.map((e) => e.message).join(", ")
+                    : data.message || "Trade failed";
+                return { success: false, message: msg };
+            }
+
+            return { success: true, data };
+        } catch (error) {
+            console.error("executeTrade error:", error);
+            return { success: false, message: "Network error" };
+        }
+    }, [getHeaders]);
+
+    // ── Forgot Password (reads from MongoDB) ─────────────────────────────────
+    const getPasswordByCredentials = useCallback(async ({ username, email }) => {
+        try {
+            const res = await fetch(`${API_URL}/auth/forgotCredentials`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ username, email }),
+            });
+            const data = await res.json();
+
+            if (!res.ok) {
+                const msg = data.errors
+                    ? data.errors.map((e) => e.message).join(", ")
+                    : data.message || "Recovery failed";
+                return { success: false, message: msg };
+            }
+
+            return {
+                success: true,
+                message: data.message,
+                password: data.password || null,
+            };
+        } catch (error) {
+            console.error("forgotCredentials error:", error);
+            return { success: false, message: "Network error" };
+        }
     }, []);
 
-    // ── Forgot Password ───────────────────────────────────────────────────────
-    const getPasswordByCredentials = useCallback(({ username, email }) => {
-        const users = getUsers();
-        const found = users.find(
-            (u) => u.username === username && u.email === email
-        );
-        if (!found) return { success: false, message: "No account found with those credentials!" };
-        return { success: true, password: found.password };
+    // ── Fetch Crypto Prices (from CoinGecko via server) ──────────────────────
+    const getCryptoPrices = useCallback(async () => {
+        try {
+            const res = await fetch(`${API_URL}/crypto/prices`);
+            const data = await res.json();
+            if (!res.ok) return { success: false, message: data.message };
+            return { success: true, data };
+        } catch (error) {
+            console.error("getCryptoPrices error:", error);
+            return { success: false, message: "Network error" };
+        }
+    }, []);
+
+    // ── Predict Price (via server + CoinGecko) ───────────────────────────────
+    const predictPrice = useCallback(async ({ coin, date }) => {
+        try {
+            const res = await fetch(`${API_URL}/crypto/predict`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ coin, date }),
+            });
+            const data = await res.json();
+            if (!res.ok) return { success: false, message: data.message };
+            return { success: true, data };
+        } catch (error) {
+            console.error("predictPrice error:", error);
+            return { success: false, message: "Network error" };
+        }
     }, []);
 
     const isLoggedIn = !!token;
@@ -116,9 +229,12 @@ const AuthProvider = ({ children }) => {
                 signUp,
                 login,
                 logout,
+                getProfile,
                 updateProfile,
-                updateHoldings,
+                executeTrade,
                 getPasswordByCredentials,
+                getCryptoPrices,
+                predictPrice,
             }}
         >
             {children}
