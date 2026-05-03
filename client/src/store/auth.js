@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useState, useCallback } from "react";
 
 // Use the same port the server is running on — change here if your .env PORT changes
-const API_URL = "http://localhost:5001/api";
+const API_URL = "http://localhost:5002/api";
 
 const AuthContext = createContext();
 

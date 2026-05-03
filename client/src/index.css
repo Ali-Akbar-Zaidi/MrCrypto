@@ -11,3 +11,96 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+/* Dark Mode Styles */
+body.dark-mode {
+  background-color: #121212 !important;
+  color: #ffffff !important;
+}
+
+body.dark-mode .main, body.dark-mode .main1, body.dark-mode .main2 {
+  background-color: rgba(30, 30, 30, 0.85) !important;
+  color: #ffffff !important;
+}
+
+body.dark-mode .login1, body.dark-mode .resetPass, body.dark-mode .credentials, body.dark-mode .otherDetails, body.dark-mode .statsSection, body.dark-mode .selectCurrency, body.dark-mode .enterDetails {
+  background-color: rgba(30, 30, 30, 0.85) !important;
+  color: #ffffff !important;
+  border-color: #333 !important;
+}
+
+body.dark-mode .signUp1 {
+  background-color: rgba(103, 101, 46, 0.9) !important;
+  color: #ffffff !important;
+}
+
+body.dark-mode p,
+body.dark-mode span,
+body.dark-mode label,
+body.dark-mode h1,
+body.dark-mode h2,
+body.dark-mode h3,
+body.dark-mode h4,
+body.dark-mode h5,
+body.dark-mode h6,
+body.dark-mode b,
+body.dark-mode strong,
+body.dark-mode i,
+body.dark-mode em,
+body.dark-mode th,
+body.dark-mode td,
+body.dark-mode div,
+body.dark-mode header,
+body.dark-mode .heading,
+body.dark-mode .header1,
+body.dark-mode .header2,
+body.dark-mode .crLabel,
+body.dark-mode .total {
+  color: #e0e0e0 !important;
+}
+
+body.dark-mode .errorMsg,
+body.dark-mode .fieldError {
+  color: #ff6b6b !important;
+}
+
+body.dark-mode .successMsg {
+  color: #51cf66 !important;
+}
+
+body.dark-mode .ethText {
+  color: #8fa3ff !important;
+}
+
+body.dark-mode .btcText {
+  color: #ffbc5c !important;
+}
+
+body.dark-mode a.item {
+  color: #e0e0e0 !important;
+}
+
+body.dark-mode a.item:hover {
+  color: #ffffff !important;
+  background-color: #333 !important;
+}
+
+body.dark-mode .footer2 {
+  background: #1e1e1e !important;
+  color: #e0e0e0 !important;
+}
+
+body.dark-mode input, body.dark-mode select {
+  background-color: #333 !important;
+  color: #fff !important;
+  border: 1px solid #555 !important;
+}
+
+body.dark-mode button {
+  background-color: #444 !important;
+  color: #fff !important;
+}
+
+body.dark-mode button:hover {
+  background-color: #555 !important;
+}

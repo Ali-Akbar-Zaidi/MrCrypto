@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../store/auth';
 import './Trade.css';
+import { usePageTitle } from './usePageTitle';
 
 // ── Luhn algorithm — industry standard for card number validation ────────────
 function luhnCheck(num) {
@@ -65,6 +66,7 @@ function getExpectedCvcLength(type) {
 }
 
 function Trade() {
+    usePageTitle('Trade With Us');
     const { executeTrade, getCryptoPrices } = useAuth();
     const navigate = useNavigate();
 

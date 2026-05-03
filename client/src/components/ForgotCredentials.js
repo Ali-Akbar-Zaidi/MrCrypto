@@ -2,8 +2,10 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../store/auth';
 import './ForgotCredentials.css';
+import { usePageTitle } from './usePageTitle';
 
 function ForgotCredentials() {
+    usePageTitle('Forgot Credentials');
     const { getPasswordByCredentials } = useAuth();
     const navigate = useNavigate();
 

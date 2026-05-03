@@ -2,8 +2,10 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../store/auth';
 import './index.css';
+import { usePageTitle } from './usePageTitle';
 
 function LoginPage() {
+    usePageTitle('Login');
     const { login, signUp } = useAuth();
     const navigate = useNavigate();
 

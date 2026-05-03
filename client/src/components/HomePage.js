@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../store/auth';
 import "./HomePage.css";
@@ -7,10 +7,30 @@ import Img1 from "./Images/cryptocurrency-1.png";
 import Img2 from "./Images/Bitcoin-price-2.png";
 import Img3 from "./Images/37387-3.png";
 
+import { usePageTitle } from './usePageTitle';
+
 function Home() {
+    usePageTitle('Home');
     const { user, isLoggedIn, logout } = useAuth();
     const navigate = useNavigate();
 
+    const [isDarkMode, setIsDarkMode] = useState(false);
+
+    useEffect(() => {
+        setIsDarkMode(document.body.classList.contains('dark-mode'));
+    }, []);
+
+    const toggleDarkMode = (e) => {
+        e.preventDefault();
+        const nextMode = !isDarkMode;
+        setIsDarkMode(nextMode);
+        localStorage.setItem('darkMode', nextMode);
+        if (nextMode) {
+            document.body.classList.add('dark-mode');
+        } else {
+            document.body.classList.remove('dark-mode');
+        }
+    };
 
     function handleLoginSignUpClick() {
         if (localStorage.getItem('token')) {
@@ -62,6 +82,9 @@ function Home() {
                             }
                         }}
                         >Log Out</a>
+                        <a id="mc" className='item' href="" onClick={toggleDarkMode}>
+                            {isDarkMode ? 'Light Mode' : 'Dark Mode'}
+                        </a>
                     </div>
                 </div>
                 <div className="box1">

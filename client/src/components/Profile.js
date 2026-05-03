@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../store/auth';
 import './Profile.css';
+import { usePageTitle } from './usePageTitle';
 
 function Profile() {
+    usePageTitle('Profile');
     const { updateProfile, getProfile, getCryptoPrices } = useAuth();
 
     const [profile, setProfile] = useState({

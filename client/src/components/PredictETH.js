@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import { useAuth } from '../store/auth';
 import './PredictETH.css';
+import { usePageTitle } from './usePageTitle';
 
 function PredictETH() {
+    usePageTitle('Predict ETH');
     const { predictPrice } = useAuth();
     const [date, setDate] = useState('');
     const [prediction, setPrediction] = useState(null);
